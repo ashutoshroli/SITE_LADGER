@@ -1,26 +1,60 @@
-<!-- ===========================
-     FOOTER COMPONENT
-     =========================== -->
-
-<footer class="footer bg-dark text-white mt-5 py-4">
-    <div class="container-fluid">
+<!-- FOOTER COMPONENT -->
+<footer class="footer mt-5">
+    <div class="footer-content">
         <div class="row">
             <div class="col-md-4">
-                <h6>Jai Hind Construction ERP</h6>
-                <p class="text-muted small">Professional View-Only Portal</p>
+                <h6>Jai Hind Construction</h6>
+                <p class="text-muted">Professional ERP Portal for efficient business management.</p>
             </div>
             <div class="col-md-4">
-                <h6>Version</h6>
-                <p class="text-muted small">v1.0.0 (VIEW-ONLY)</p>
+                <h6>Features</h6>
+                <ul class="list-unstyled text-muted">
+                    <li>📊 Real-time Dashboard</li>
+                    <li>📋 Complete Data Management</li>
+                    <li>📈 Advanced Reports</li>
+                </ul>
             </div>
-            <div class="col-md-4 text-end">
-                <h6>Support</h6>
-                <p class="text-muted small">For assistance, contact administrator</p>
+            <div class="col-md-4">
+                <h6>Portal Info</h6>
+                <p class="text-muted">
+                    <small>Version: 1.0.0<br>
+                    Mode: View-Only<br>
+                    Last Updated: June 2026</small>
+                </p>
             </div>
         </div>
-        <hr class="my-3" />
-        <div class="text-center text-muted small">
-            <p>&copy; 2026 Jai Hind Construction. All Rights Reserved. | This portal is READ-ONLY.</p>
+        <hr class="my-3">
+        <div class="text-center text-muted">
+            <small>&copy; 2026 Jai Hind Construction. All Rights Reserved. | This is a READ-ONLY ERP Portal</small>
         </div>
     </div>
 </footer>
+
+<style>
+    .footer {
+        background: #f8f9fa;
+        padding: 30px 20px;
+        border-top: 1px solid #ecf0f1;
+        margin-top: auto;
+    }
+
+    body.dark-theme .footer {
+        background: #1a1a1a;
+        border-top-color: #333;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer h6 {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    body.dark-theme .footer h6 {
+        color: #ecf0f1;
+    }
+</style>

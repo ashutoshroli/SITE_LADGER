@@ -1,76 +1,58 @@
-<!-- ===========================
-     SIDEBAR COMPONENT
-     =========================== -->
-
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header p-3 border-bottom">
-        <h4 class="text-white mb-0">📊 Jai Hind ERP</h4>
+<!-- SIDEBAR COMPONENT -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand px-3 py-4">
+        <h5 class="fw-bold mb-0">☑️ JAI HIND ERP</h5>
+        <small class="text-muted">View-Only Portal</small>
     </div>
 
-    <ul class="sidebar-menu">
-        <li class="menu-label">Main</li>
-        <li>
-            <a href="#" class="nav-link active" data-page="dashboard" onclick="navigateToPage('dashboard')">
-                <i class="fas fa-chart-pie"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
+    <nav class="sidebar-menu">
+        <!-- Main Menu -->
+        <div class="menu-label">Dashboard</div>
+        <a href="#" onclick="navigateTo('dashboard')" class="nav-link active">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
 
-        <li class="menu-label">Data Management</li>
-        <li>
-            <a href="#" class="nav-link" data-page="users" onclick="navigateToPage('users')">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link" data-page="transactions" onclick="navigateToPage('transactions')">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transactions</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link" data-page="dues" onclick="navigateToPage('dues')">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span>Dues</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link" data-page="items" onclick="navigateToPage('items')">
-                <i class="fas fa-box"></i>
-                <span>Items</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link" data-page="villages" onclick="navigateToPage('villages')">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Villages</span>
-            </a>
-        </li>
+        <div class="menu-label mt-3">Data Management</div>
+        <a href="#" onclick="navigateTo('users')" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Users</span>
+        </a>
+        <a href="#" onclick="navigateTo('transactions')" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+        </a>
+        <a href="#" onclick="navigateTo('dues')" class="nav-link">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>Dues</span>
+        </a>
+        <a href="#" onclick="navigateTo('items')" class="nav-link">
+            <i class="fas fa-box"></i>
+            <span>Items</span>
+        </a>
+        <a href="#" onclick="navigateTo('villages')" class="nav-link">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Villages</span>
+        </a>
 
-        <li class="menu-label">Reports & Views</li>
-        <li>
-            <a href="#" class="nav-link" data-page="reports" onclick="navigateToPage('reports')">
-                <i class="fas fa-file-alt"></i>
-                <span>Reports</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link" data-page="invoice" onclick="navigateToPage('invoice')">
-                <i class="fas fa-receipt"></i>
-                <span>Invoice Preview</span>
-            </a>
-        </li>
+        <div class="menu-label mt-3">Reports & Views</div>
+        <a href="#" onclick="navigateTo('reports')" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+        </a>
+        <a href="#" onclick="navigateTo('invoice')" class="nav-link">
+            <i class="fas fa-file-pdf"></i>
+            <span>Invoices</span>
+        </a>
 
-        <li class="menu-label">Account</li>
-        <li>
-            <a href="#" class="nav-link" data-page="profile" onclick="navigateToPage('profile')">
-                <i class="fas fa-user-circle"></i>
-                <span>My Profile</span>
-            </a>
-        </li>
-    </ul>
-</div>
-
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <div class="menu-label mt-3">Account</div>
+        <a href="#" onclick="navigateTo('profile')" class="nav-link">
+            <i class="fas fa-user-circle"></i>
+            <span>My Profile</span>
+        </a>
+        <a href="#" onclick="Auth.logout()" class="nav-link text-danger">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
