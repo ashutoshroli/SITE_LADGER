@@ -9,7 +9,9 @@
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
         .login-container { max-width: 400px; margin-top: 100px; }
         #dashboard-section { display: none; }
-        .card { border-radius: 10px; border: none; }
+        /* Table scroll karne ke liye style */
+        .table-responsive { max-height: 70vh; overflow-y: auto; }
+        thead th { position: sticky; top: 0; background-color: #343a40 !important; color: white; z-index: 1;}
     </style>
 </head>
 <body>
@@ -18,15 +20,8 @@
         <div class="card shadow p-4">
             <h3 class="text-center text-primary mb-4 fw-bold">JAI HIND ERP</h3>
             <div id="error-msg" class="alert alert-danger d-none text-center rounded"></div>
-            
-            <div class="mb-3">
-                <label class="form-label fw-bold">Email Address</label>
-                <input type="email" id="email" class="form-control" placeholder="admin@jaihind.com">
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-bold">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Enter Password">
-            </div>
+            <div class="mb-3"><input type="email" id="email" class="form-control" placeholder="Email Address"></div>
+            <div class="mb-4"><input type="password" id="password" class="form-control" placeholder="Password"></div>
             <button id="login-btn" class="btn btn-primary w-100 fw-bold p-2" onclick="processLogin()">LOGIN</button>
         </div>
     </div>
@@ -41,53 +36,69 @@
         <div class="row mt-4 px-2">
             <div class="col-md-2 mb-3">
                 <div class="list-group shadow-sm">
-                    <a href="#" class="list-group-item list-group-item-action active fw-bold">Dashboard</a>
-                    <a href="#" class="list-group-item list-group-item-action">Transactions</a>
-                    <a href="#" class="list-group-item list-group-item-action">Material List</a>
+                    <a href="#" class="list-group-item list-group-item-action fw-bold" onclick="showView('dash-view')">📊 Dashboard</a>
+                    <a href="#" class="list-group-item list-group-item-action fw-bold" onclick="showView('data-view')">🗄️ Master Database</a>
                 </div>
             </div>
             
             <div class="col-md-10">
-                <div class="card p-4 shadow-sm">
+                
+                <div id="dash-view" class="card p-4 shadow-sm mb-3">
                     <h4 class="mb-4 text-secondary fw-bold border-bottom pb-2">Business Summary</h4>
-                    
-                    <div class="row" id="dashboard-cards">
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-success text-white shadow p-3">
-                                <h6 class="text-uppercase" style="letter-spacing: 1px;">Total Income</h6>
-                                <h3 id="dash-income" class="fw-bold mt-2">Loading...</h3>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-danger text-white shadow p-3">
-                                <h6 class="text-uppercase" style="letter-spacing: 1px;">Total Expense</h6>
-                                <h3 id="dash-expense" class="fw-bold mt-2">Loading...</h3>
-                            </div>
-                        </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3"><div class="card bg-success text-white shadow p-3"><h6>Total Income</h6><h3 id="dash-income">Loading...</h3></div></div>
+                        <div class="col-md-3 mb-3"><div class="card bg-danger text-white shadow p-3"><h6>Total Expense</h6><h3 id="dash-expense">Loading...</h3></div></div>
+                        <div class="col-md-3 mb-3"><div class="card bg-primary text-white shadow p-3"><h6>Net Balance</h6><h3 id="dash-balance">Loading...</h3></div></div>
+                        <div class="col-md-3 mb-3"><div class="card bg-warning text-dark shadow p-3"><h6>Market Dues</h6><h3 id="dash-dues">Loading...</h3></div></div>
+                    </div>
+                </div>
 
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-primary text-white shadow p-3">
-                                <h6 class="text-uppercase" style="letter-spacing: 1px;">Net Balance</h6>
-                                <h3 id="dash-balance" class="fw-bold mt-2">Loading...</h3>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-warning text-dark shadow p-3">
-                                <h6 class="text-uppercase" style="letter-spacing: 1px;">Market Dues</h6>
-                                <h3 id="dash-dues" class="fw-bold mt-2">Loading...</h3>
-                            </div>
-                        </div>
+                <div id="data-view" class="card p-4 shadow-sm mb-3" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                        <h4 class="text-secondary fw-bold mb-0">Database Viewer</h4>
+                        <select id="sheet-selector" class="form-select w-auto shadow-sm border-primary" onchange="fetchSheetData()">
+                            <option value="TRANSACTIONS">TRANSACTIONS (Len-Den)</option>
+                            <option value="DUES">DUES (Baki Khata)</option>
+                            <option value="USERS">USERS (Logins)</option>
+                            <option value="ITEM DETAILS">ITEM DETAILS</option>
+                            <option value="ITEM LIST">ITEM LIST</option>
+                            <option value="VILLAGE MASTER">VILLAGE MASTER</option>
+                            <option value="Login Form">Login Form</option>
+                            <option value="BY DATE">BY DATE</option>
+                            <option value="DASHBOARD">DASHBOARD</option>
+                            <option value="ITEM BY DATE">ITEM BY DATE</option>
+                            <option value="NUMBERS">NUMBERS</option>
+                        </select>
                     </div>
 
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover text-nowrap" id="dynamic-table">
+                            <thead id="table-head">
+                                <tr><th>Select a sheet to load data...</th></tr>
+                            </thead>
+                            <tbody id="table-body">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec"; // Aapka URL
+
+        // VIEW BADALNE KA FUNCTION (Sidebar clicks)
+        function showView(viewId) {
+            document.getElementById('dash-view').style.display = 'none';
+            document.getElementById('data-view').style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+            
+            if(viewId === 'data-view') {
+                fetchSheetData(); // Master DB kholte hi data load hoga
+            }
+        }
 
         async function processLogin() {
             const email = document.getElementById('email').value.trim();
@@ -95,78 +106,86 @@
             const loginBtn = document.getElementById('login-btn');
             const errorBox = document.getElementById('error-msg');
 
-            if (!email || !password) {
-                showError("Please enter both email and password.");
-                return;
-            }
-
-            loginBtn.innerHTML = "Verifying...";
-            loginBtn.disabled = true;
-            errorBox.classList.add('d-none');
+            if (!email || !password) return showError("Please enter email & password.");
+            
+            loginBtn.innerHTML = "Verifying..."; loginBtn.disabled = true; errorBox.classList.add('d-none');
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN', email: email, password: password }),
+                const res = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'LOGIN', email, password }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
-
-                const data = await response.json();
+                const data = await res.json();
 
                 if (data.status === 'success') {
-                    // Hide login, show dashboard
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('dashboard-section').style.display = 'block';
-                    document.getElementById('user-info').innerText = `Welcome, ${data.user.name} (${data.user.role})`;
-                    
-                    // Fetch Dashboard Data
+                    document.getElementById('user-info').innerText = `Welcome, ${data.user.name}`;
                     loadDashboardData();
-                } else {
-                    showError(data.message);
-                }
-            } catch (error) {
-                showError("Server Error! Check console or API URL.");
-                console.error("Fetch Error:", error);
-            } finally {
-                loginBtn.innerHTML = "LOGIN";
-                loginBtn.disabled = false;
-            }
+                } else showError(data.message);
+            } catch (e) { showError("Server Error!"); } 
+            finally { loginBtn.innerHTML = "LOGIN"; loginBtn.disabled = false; }
         }
 
         async function loadDashboardData() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'GET_DASHBOARD' }),
+                const res = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'GET_DASHBOARD' }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    // Update the UI cards with fetched data
-                    document.getElementById('dash-income').innerText = "₹ " + result.data.income.toLocaleString();
-                    document.getElementById('dash-expense').innerText = "₹ " + result.data.expense.toLocaleString();
-                    document.getElementById('dash-balance').innerText = "₹ " + result.data.balance.toLocaleString();
-                    document.getElementById('dash-dues').innerText = "₹ " + result.data.dues.toLocaleString();
-                } else {
-                    alert("Dashboard Error: " + result.message);
+                const r = await res.json();
+                if (r.status === 'success') {
+                    document.getElementById('dash-income').innerText = "₹ " + r.data.income.toLocaleString();
+                    document.getElementById('dash-expense').innerText = "₹ " + r.data.expense.toLocaleString();
+                    document.getElementById('dash-balance').innerText = "₹ " + r.data.balance.toLocaleString();
+                    document.getElementById('dash-dues').innerText = "₹ " + r.data.dues.toLocaleString();
                 }
-            } catch (error) {
-                console.error("Dashboard Fetch Error:", error);
+            } catch (e) {}
+        }
+
+        // --- NAYA FUNCTION: PURA DATA DAKHNE KE LIYE ---
+        async function fetchSheetData() {
+            const sheetName = document.getElementById('sheet-selector').value;
+            const thead = document.getElementById('table-head');
+            const tbody = document.getElementById('table-body');
+
+            thead.innerHTML = `<tr><th class="text-primary">Loading data for ${sheetName}... Please wait.</th></tr>`;
+            tbody.innerHTML = '';
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'GET_SHEET_DATA', sheetName: sheetName }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                const r = await res.json();
+
+                if (r.status === 'success') {
+                    // Headings Generate karo (No columns missed)
+                    let headHTML = '<tr>';
+                    r.headers.forEach(h => { headHTML += `<th>${h}</th>`; });
+                    headHTML += '</tr>';
+                    thead.innerHTML = headHTML;
+
+                    // Data Rows Generate karo
+                    let bodyHTML = '';
+                    r.rows.forEach(row => {
+                        bodyHTML += '<tr>';
+                        row.forEach(cell => { bodyHTML += `<td>${cell || '-'}</td>`; });
+                        bodyHTML += '</tr>';
+                    });
+                    tbody.innerHTML = bodyHTML;
+                } else {
+                    thead.innerHTML = `<tr><th class="text-danger">Error: ${r.message}</th></tr>`;
+                }
+            } catch (e) {
+                thead.innerHTML = `<tr><th class="text-danger">Failed to fetch data.</th></tr>`;
             }
         }
 
         function showError(msg) {
-            const errorBox = document.getElementById('error-msg');
-            errorBox.innerText = msg;
-            errorBox.classList.remove('d-none');
+            const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('d-none');
         }
-
-        function logout() {
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('dashboard-section').style.display = 'none';
-            document.getElementById('password').value = ""; // Only clear password on logout
-        }
+        function logout() { location.reload(); }
     </script>
 </body>
 </html>
