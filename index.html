@@ -1,125 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jai Hind Construction ERP</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; }
-        .login-container { max-width: 400px; margin-top: 100px; }
-        #dashboard-section { display: none; }
-    </style>
-</head>
-<body>
-
-    <!-- 1. LOGIN SECTION -->
-    <div class="container login-container" id="login-section">
-        <div class="card shadow-sm p-4">
-            <h3 class="text-center text-primary mb-4">Jai Hind ERP</h3>
-            <div id="error-msg" class="alert alert-danger d-none"></div>
-            
-            <div class="mb-3">
-                <label class="form-label">Email address</label>
-                <input type="email" id="email" class="form-control" placeholder="Email Type Karein">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Password Type Karein">
-            </div>
-            <!-- Button -->
-            <button id="login-btn" class="btn btn-primary w-100" onclick="processLogin()">Login</button>
-        </div>
-    </div>
-
-    <!-- 2. DASHBOARD SECTION -->
-    <div class="container-fluid" id="dashboard-section">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 mt-2 rounded">
-            <a class="navbar-brand" href="#">Jai Hind Construction</a>
-            <div class="ms-auto text-white" id="user-info"></div>
-            <button class="btn btn-sm btn-danger ms-3" onclick="logout()">Logout</button>
-        </nav>
-
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action active">Dashboard</a>
-                    <a href="#" class="list-group-item list-group-item-action">Transactions</a>
-                    <a href="#" class="list-group-item list-group-item-action">Material List</a>
-                </div>
-            </div>
             <div class="col-md-9">
-                <div class="card p-4 shadow-sm">
-                    <h4>Welcome to ERP Dashboard</h4>
-                    <p>Modules will load here...</p>
+                <div class="row" id="dashboard-cards">
+                    <h4 class="mb-3">ERP Summary</h4>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-success text-white shadow-sm p-3">
+                            <h6>Total Income (Credit)</h6>
+                            <h3 id="dash-income">Loading...</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-danger text-white shadow-sm p-3">
+                            <h6>Total Expense (Debit)</h6>
+                            <h3 id="dash-expense">Loading...</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-primary text-white shadow-sm p-3">
+                            <h6>Net Balance</h6>
+                            <h3 id="dash-balance">Loading...</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-warning text-dark shadow-sm p-3">
+                            <h6>Pending Market Dues</h6>
+                            <h3 id="dash-dues">Loading...</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+            ```
 
-    <!-- JAVASCRIPT DIRECTLY INSIDE HTML -->
-    <script>
-        // Aapka API URL
-        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec";
+Aur apne `<script>` tag ke andar (JS mein), ye naya function add kar dijiye, aur `processLogin` mein ek line add kijiye:
 
-        async function processLogin() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const loginBtn = document.getElementById('login-btn');
-            const errorBox = document.getElementById('error-msg');
-
-            // Validation
-            if (!email || !password) {
-                showError("Please enter both email and password.");
-                return;
-            }
-
-            // Button ko loading state me dalna
-            loginBtn.innerHTML = "Verifying...";
-            loginBtn.disabled = true;
-            errorBox.classList.add('d-none');
-
+```javascript
+        // Naya Function - Dashboard Data laane ke liye
+        async function loadDashboardData() {
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN', email: email, password: password }),
+                    body: JSON.stringify({ action: 'GET_DASHBOARD' }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
+                const result = await response.json();
 
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    // Login Pass -> Dashboard dikhao
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('dashboard-section').style.display = 'block';
-                    document.getElementById('user-info').innerText = `Welcome, ${data.user.name} (${data.user.role})`;
+                if (result.status === 'success') {
+                    // Yahan hum amounts ko screen par daal rahe hain
+                    document.getElementById('dash-income').innerText = "₹ " + result.data.income;
+                    document.getElementById('dash-expense').innerText = "₹ " + result.data.expense;
+                    document.getElementById('dash-balance').innerText = "₹ " + result.data.balance;
+                    document.getElementById('dash-dues').innerText = "₹ " + result.data.dues;
                 } else {
-                    // Login Fail
-                    showError(data.message);
+                    alert("Dashboard load karne me problem aayi: " + result.message);
                 }
             } catch (error) {
-                showError("Server Error! Console check karein.");
-                console.error("Fetch Error:", error);
-            } finally {
-                // Button wapas normal karna
-                loginBtn.innerHTML = "Login";
-                loginBtn.disabled = false;
+                console.error("Dashboard Error:", error);
             }
         }
 
-        function showError(msg) {
-            const errorBox = document.getElementById('error-msg');
-            errorBox.innerText = msg;
-            errorBox.classList.remove('d-none');
-        }
-
-        function logout() {
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('dashboard-section').style.display = 'none';
-            document.getElementById('email').value = "";
-            document.getElementById('password').value = "";
-        }
-    </script>
-</body>
-</html>
+        // Apna processLogin function dekhein, jahan "Login Pass" hota hai wahan ye line add karni hai:
+        // if (data.status === 'success') {
+        //     document.getElementById('login-section').style.display = 'none';
+        //     document.getElementById('dashboard-section').style.display = 'block';
+        //     document.getElementById('user-info').innerText = `Welcome, ${data.user.name} (${data.user.role})`;
+        //     loadDashboardData();  <--- YE LINE ADD KAREIN
+        // }
