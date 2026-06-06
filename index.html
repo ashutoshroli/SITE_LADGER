@@ -9,9 +9,9 @@
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
         .login-container { max-width: 400px; margin-top: 100px; }
         #dashboard-section { display: none; }
-        /* Table scroll karne ke liye style */
-        .table-responsive { max-height: 70vh; overflow-y: auto; }
+        .table-responsive { max-height: 65vh; overflow-y: auto; }
         thead th { position: sticky; top: 0; background-color: #343a40 !important; color: white; z-index: 1;}
+        .card { border-radius: 10px; border: none; }
     </style>
 </head>
 <body>
@@ -20,8 +20,13 @@
         <div class="card shadow p-4">
             <h3 class="text-center text-primary mb-4 fw-bold">JAI HIND ERP</h3>
             <div id="error-msg" class="alert alert-danger d-none text-center rounded"></div>
-            <div class="mb-3"><input type="email" id="email" class="form-control" placeholder="Email Address"></div>
-            <div class="mb-4"><input type="password" id="password" class="form-control" placeholder="Password"></div>
+            
+            <div class="mb-3">
+                <input type="email" id="email" class="form-control p-2" placeholder="Email Address">
+            </div>
+            <div class="mb-4">
+                <input type="password" id="password" class="form-control p-2" placeholder="Password">
+            </div>
             <button id="login-btn" class="btn btn-primary w-100 fw-bold p-2" onclick="processLogin()">LOGIN</button>
         </div>
     </div>
@@ -46,10 +51,26 @@
                 <div id="dash-view" class="card p-4 shadow-sm mb-3">
                     <h4 class="mb-4 text-secondary fw-bold border-bottom pb-2">Business Summary</h4>
                     <div class="row">
-                        <div class="col-md-3 mb-3"><div class="card bg-success text-white shadow p-3"><h6>Total Income</h6><h3 id="dash-income">Loading...</h3></div></div>
-                        <div class="col-md-3 mb-3"><div class="card bg-danger text-white shadow p-3"><h6>Total Expense</h6><h3 id="dash-expense">Loading...</h3></div></div>
-                        <div class="col-md-3 mb-3"><div class="card bg-primary text-white shadow p-3"><h6>Net Balance</h6><h3 id="dash-balance">Loading...</h3></div></div>
-                        <div class="col-md-3 mb-3"><div class="card bg-warning text-dark shadow p-3"><h6>Market Dues</h6><h3 id="dash-dues">Loading...</h3></div></div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-success text-white shadow p-3">
+                                <h6>Total Income</h6><h3 id="dash-income" class="fw-bold mt-2">Loading...</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-danger text-white shadow p-3">
+                                <h6>Total Expense</h6><h3 id="dash-expense" class="fw-bold mt-2">Loading...</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-primary text-white shadow p-3">
+                                <h6>Net Balance</h6><h3 id="dash-balance" class="fw-bold mt-2">Loading...</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-warning text-dark shadow p-3">
+                                <h6>Market Dues</h6><h3 id="dash-dues" class="fw-bold mt-2">Loading...</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -71,6 +92,8 @@
                         </select>
                     </div>
 
+                    <input type="text" id="searchInput" class="form-control mb-3 border-primary shadow-sm" onkeyup="filterTable()" placeholder="🔍 Is table me kuch bhi search karein... (e.g., Name, Amount, Date)">
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover text-nowrap" id="dynamic-table">
                             <thead id="table-head">
@@ -87,19 +110,21 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec"; // Aapka URL
+        // Aapka pehle se diya hua Deployment URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec";
 
-        // VIEW BADALNE KA FUNCTION (Sidebar clicks)
+        // Navigation Controller
         function showView(viewId) {
             document.getElementById('dash-view').style.display = 'none';
             document.getElementById('data-view').style.display = 'none';
             document.getElementById(viewId).style.display = 'block';
             
             if(viewId === 'data-view') {
-                fetchSheetData(); // Master DB kholte hi data load hoga
+                fetchSheetData(); // Automatically load data when tab is opened
             }
         }
 
+        // Login Logic
         async function processLogin() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -108,11 +133,14 @@
 
             if (!email || !password) return showError("Please enter email & password.");
             
-            loginBtn.innerHTML = "Verifying..."; loginBtn.disabled = true; errorBox.classList.add('d-none');
+            loginBtn.innerHTML = "Verifying..."; 
+            loginBtn.disabled = true; 
+            errorBox.classList.add('d-none');
 
             try {
                 const res = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'LOGIN', email, password }),
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'LOGIN', email, password }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 const data = await res.json();
@@ -122,51 +150,63 @@
                     document.getElementById('dashboard-section').style.display = 'block';
                     document.getElementById('user-info').innerText = `Welcome, ${data.user.name}`;
                     loadDashboardData();
-                } else showError(data.message);
-            } catch (e) { showError("Server Error!"); } 
-            finally { loginBtn.innerHTML = "LOGIN"; loginBtn.disabled = false; }
+                } else {
+                    showError(data.message);
+                }
+            } catch (e) { 
+                showError("Server Connection Failed! Internet ya URL check karein."); 
+            } finally { 
+                loginBtn.innerHTML = "LOGIN"; 
+                loginBtn.disabled = false; 
+            }
         }
 
+        // Fetch Dashboard Numbers
         async function loadDashboardData() {
             try {
                 const res = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'GET_DASHBOARD' }),
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'GET_DASHBOARD' }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 const r = await res.json();
+                
                 if (r.status === 'success') {
-                    document.getElementById('dash-income').innerText = "₹ " + r.data.income.toLocaleString();
-                    document.getElementById('dash-expense').innerText = "₹ " + r.data.expense.toLocaleString();
-                    document.getElementById('dash-balance').innerText = "₹ " + r.data.balance.toLocaleString();
-                    document.getElementById('dash-dues').innerText = "₹ " + r.data.dues.toLocaleString();
+                    document.getElementById('dash-income').innerText = "₹ " + r.data.income.toLocaleString('en-IN');
+                    document.getElementById('dash-expense').innerText = "₹ " + r.data.expense.toLocaleString('en-IN');
+                    document.getElementById('dash-balance').innerText = "₹ " + r.data.balance.toLocaleString('en-IN');
+                    document.getElementById('dash-dues').innerText = "₹ " + r.data.dues.toLocaleString('en-IN');
                 }
-            } catch (e) {}
+            } catch (e) { console.error("Dashboard Load Error:", e); }
         }
 
-        // --- NAYA FUNCTION: PURA DATA DAKHNE KE LIYE ---
+        // Fetch Master Database Sheet
         async function fetchSheetData() {
             const sheetName = document.getElementById('sheet-selector').value;
             const thead = document.getElementById('table-head');
             const tbody = document.getElementById('table-body');
+            
+            document.getElementById('searchInput').value = ""; // Reset Search
 
-            thead.innerHTML = `<tr><th class="text-primary">Loading data for ${sheetName}... Please wait.</th></tr>`;
+            thead.innerHTML = `<tr><th class="text-primary text-center">Loading data for ${sheetName}... Please wait.</th></tr>`;
             tbody.innerHTML = '';
 
             try {
                 const res = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'GET_SHEET_DATA', sheetName: sheetName }),
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'GET_SHEET_DATA', sheetName: sheetName }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 const r = await res.json();
 
                 if (r.status === 'success') {
-                    // Headings Generate karo (No columns missed)
+                    // Create Headings dynamically
                     let headHTML = '<tr>';
                     r.headers.forEach(h => { headHTML += `<th>${h}</th>`; });
                     headHTML += '</tr>';
                     thead.innerHTML = headHTML;
 
-                    // Data Rows Generate karo
+                    // Create Data Rows dynamically
                     let bodyHTML = '';
                     r.rows.forEach(row => {
                         bodyHTML += '<tr>';
@@ -182,10 +222,31 @@
             }
         }
 
-        function showError(msg) {
-            const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('d-none');
+        // Live Frontend Search Filter
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.getElementById("table-body").getElementsByTagName("tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let rowData = rows[i].innerText.toLowerCase();
+                if (rowData.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
         }
-        function logout() { location.reload(); }
+
+        // Utility Functions
+        function showError(msg) {
+            const err = document.getElementById('error-msg'); 
+            err.innerText = msg; 
+            err.classList.remove('d-none');
+        }
+        
+        function logout() { 
+            location.reload(); 
+        }
     </script>
 </body>
 </html>
