@@ -1,0 +1,30 @@
+<!-- ===========================
+     NAVBAR COMPONENT
+     =========================== -->
+
+<nav class="navbar-custom">
+    <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="d-flex align-items-center gap-3">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h5 class="mb-0 text-white" style="font-weight: 700; letter-spacing: 0.5px;">
+                🏗️ Jai Hind Construction ERP
+            </h5>
+        </div>
+
+        <div class="user-menu">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <div class="user-badge">
+                <i class="fas fa-user-circle"></i> <span id="userNameNav">Loading...</span>
+            </div>
+
+            <button class="btn btn-sm btn-danger" onclick="Auth.logout()" title="Logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+</nav>
