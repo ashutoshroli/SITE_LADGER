@@ -22,12 +22,13 @@
             
             <div class="mb-3">
                 <label class="form-label">Email address</label>
-                <input type="email" id="email" class="form-control" placeholder="admin@jaihind.com">
+                <input type="email" id="email" class="form-control" placeholder="Email Type Karein">
             </div>
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Enter Password">
+                <input type="password" id="password" class="form-control" placeholder="Password Type Karein">
             </div>
+            <!-- Button -->
             <button id="login-btn" class="btn btn-primary w-100" onclick="processLogin()">Login</button>
         </div>
     </div>
@@ -57,7 +58,68 @@
         </div>
     </div>
 
-    <!-- JavaScript File -->
-    <script src="app.js"></script>
+    <!-- JAVASCRIPT DIRECTLY INSIDE HTML -->
+    <script>
+        // Aapka API URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbwEhsKonoUzRLXW8P25HXlKO3e6UWAy9dE-oJXIBuYcHKJC1nNc96ABnFOQkh-Yur8s/exec";
+
+        async function processLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('login-btn');
+            const errorBox = document.getElementById('error-msg');
+
+            // Validation
+            if (!email || !password) {
+                showError("Please enter both email and password.");
+                return;
+            }
+
+            // Button ko loading state me dalna
+            loginBtn.innerHTML = "Verifying...";
+            loginBtn.disabled = true;
+            errorBox.classList.add('d-none');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN', email: email, password: password }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Login Pass -> Dashboard dikhao
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard-section').style.display = 'block';
+                    document.getElementById('user-info').innerText = `Welcome, ${data.user.name} (${data.user.role})`;
+                } else {
+                    // Login Fail
+                    showError(data.message);
+                }
+            } catch (error) {
+                showError("Server Error! Console check karein.");
+                console.error("Fetch Error:", error);
+            } finally {
+                // Button wapas normal karna
+                loginBtn.innerHTML = "Login";
+                loginBtn.disabled = false;
+            }
+        }
+
+        function showError(msg) {
+            const errorBox = document.getElementById('error-msg');
+            errorBox.innerText = msg;
+            errorBox.classList.remove('d-none');
+        }
+
+        function logout() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('email').value = "";
+            document.getElementById('password').value = "";
+        }
+    </script>
 </body>
 </html>
