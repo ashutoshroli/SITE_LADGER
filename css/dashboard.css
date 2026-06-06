@@ -1,0 +1,162 @@
+/* ===========================
+   DASHBOARD SPECIFIC STYLES
+   =========================== */
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 5px solid #667eea;
+}
+
+body.dark-theme .dashboard-card {
+    background: #1a1a1a;
+    border-left-color: #667eea;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card.income {
+    border-left-color: #43e97b;
+}
+
+.dashboard-card.expense {
+    border-left-color: #f5576c;
+}
+
+.dashboard-card.balance {
+    border-left-color: #4facfe;
+}
+
+.dashboard-card.dues {
+    border-left-color: #ffc107;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.card-label {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+body.dark-theme .card-value {
+    color: #ecf0f1;
+}
+
+.card-change {
+    font-size: 0.85rem;
+    color: #95a5a6;
+}
+
+.card-change.positive {
+    color: #43e97b;
+}
+
+.card-change.negative {
+    color: #f5576c;
+}
+
+/* ===========================
+   RECENT TRANSACTIONS
+   =========================== */
+
+.recent-transactions {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+body.dark-theme .recent-transactions {
+    background: #1a1a1a;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #ecf0f1;
+    transition: all 0.2s ease;
+}
+
+body.dark-theme .transaction-item {
+    border-bottom-color: #333;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-item:hover {
+    background: #f8f9fa;
+    padding-left: 10px;
+}
+
+body.dark-theme .transaction-item:hover {
+    background: #262626;
+}
+
+.transaction-info {
+    flex: 1;
+}
+
+.transaction-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 3px;
+}
+
+body.dark-theme .transaction-name {
+    color: #ecf0f1;
+}
+
+.transaction-date {
+    font-size: 0.85rem;
+    color: #95a5a6;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+body.dark-theme .transaction-amount {
+    color: #ecf0f1;
+}
+
+.transaction-amount.debit {
+    color: #f5576c;
+}
+
+.transaction-amount.credit {
+    color: #43e97b;
+}
